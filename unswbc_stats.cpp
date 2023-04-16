@@ -168,7 +168,8 @@ public:
           // std::cout << "Opened " << file.path() << std::endl;
 
           // get date
-          std::string date = file.path();
+          fs::path pathname = file.path();
+          std::string date = pathname.string();
           date = date.substr(10, 8);
 
           std::string line;
