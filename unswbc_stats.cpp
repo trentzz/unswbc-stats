@@ -108,6 +108,43 @@ public:
 typedef std::vector<std::pair<std::string, Player>> PlayerVec;
 typedef std::vector<std::pair<std::string, Session>> SessionVec;
 
+namespace StringUtils {
+std::vector<std::string> split_string(std::string str, char splitter) {
+  std::vector<std::string> result;
+  std::string current = "";
+  for (int i = 0; i < str.size(); i++) {
+    if (str[i] == splitter) {
+      if (current != "") {
+        result.push_back(current);
+        current = "";
+      }
+      continue;
+    }
+    current += str[i];
+  }
+  if (current.size() != 0)
+    result.push_back(current);
+  return result;
+}
+
+std::string clean_str(std::string str) {
+  // Remove leading spaces
+  size_t first = str.find_first_not_of(" ");
+  if (first != std::string::npos) {
+    str = str.substr(first);
+  }
+
+  // Remove trailing spaces
+  size_t last = str.find_last_not_of(" ");
+  if (last != std::string::npos) {
+    str = str.substr(0, last + 1);
+  }
+
+  return str;
+}
+
+}; // namespace StringUtils
+
 class Stats {
 private:
   std::unordered_map<std::string, Session> session_data;
@@ -117,46 +154,12 @@ private:
   std::string folder_path;
 
 public:
-  std::vector<std::string> split_string(std::string str, char splitter) {
-    std::vector<std::string> result;
-    std::string current = "";
-    for (int i = 0; i < str.size(); i++) {
-      if (str[i] == splitter) {
-        if (current != "") {
-          result.push_back(current);
-          current = "";
-        }
-        continue;
-      }
-      current += str[i];
-    }
-    if (current.size() != 0)
-      result.push_back(current);
-    return result;
-  }
-
   void add_line(Line line) {
     session_data[line.date].add_team(line.team);
     session_data[line.date].add_court(line.court_no);
     for (std::string name : line.team) {
       player_data[name].add_game(line.date);
     }
-  }
-
-  std::string clean_str(std::string str) {
-    // Remove leading spaces
-    size_t first = str.find_first_not_of(" ");
-    if (first != std::string::npos) {
-      str = str.substr(first);
-    }
-
-    // Remove trailing spaces
-    size_t last = str.find_last_not_of(" ");
-    if (last != std::string::npos) {
-      str = str.substr(0, last + 1);
-    }
-
-    return str;
   }
 
   void get_data() {
@@ -169,6 +172,7 @@ public:
 
           // get date
           fs::path pathname = file.path();
+          std::cout << pathname << std::endl;
           std::string date = pathname.string();
           date = date.substr(10, 8);
 
@@ -183,7 +187,8 @@ public:
             }
 
             std::stringstream ss(line);
-            std::vector<std::string> line_vec = split_string(line, ',');
+            std::vector<std::string> line_vec =
+                StringUtils::split_string(line, ',');
 
             std::string court_no = line_vec.at(0);
 
@@ -197,7 +202,7 @@ public:
 
             // making all names lower case
             for (auto &str : team) {
-              str = clean_str(str);
+              str = StringUtils::clean_str(str);
               std::transform(str.begin(), str.end(), str.begin(),
                              [](unsigned char c) { return std::tolower(c); });
             }

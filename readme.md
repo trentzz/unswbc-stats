@@ -1,9 +1,5 @@
 ## UNSW BC Stats
 
-no flame pls i wrote this at 2am
-
-full disclosure code is spaghetti
-
 ### Supported Features
 
 - Number of games each player has played.
@@ -12,10 +8,10 @@ full disclosure code is spaghetti
 
 ### Future Features
 
-- Number of sessions each player has attended.
-- Number of games a pair of players have played together.
-- Number of times a court has been used overall.
-- Number of games a team has played together overall.
+- More different types of statistics for players, courts and sessions.
+- `unswbc_stats_v2.cpp` is a work in progress as a cleaned up version.
+- Currently trying to use YAML to store the stats after calculation, but I have
+  run into issues encoding and decoding the complex data structures used.
 
 ### Usage
 1. At the end of each session, copy the court and player data to a new google sheet. They should have the columns: `COURT | PLAYER 1 | PLAYER 2 | PLAYER 3 | PLAYER 4 |`
