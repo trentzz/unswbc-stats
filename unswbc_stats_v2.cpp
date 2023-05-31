@@ -8,10 +8,14 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <yaml-cpp/emittermanip.h>
-#include <yaml-cpp/yaml.h>
+// #include <yaml-cpp/emittermanip.h>
+// #include <yaml-cpp/yaml.h>
 
 namespace fs = std::filesystem;
+
+class Session;
+typedef std::vector<std::pair<std::string, std::vector<std::string>>> SessionData;
+typedef std::unordered_map<std::string, Session> AllData;
 
 namespace StringUtils {
 std::vector<std::string> split_string(std::string str, char splitter) {
@@ -50,11 +54,41 @@ std::string clean_str(std::string str) {
 
 }; // namespace StringUtils
 
-class Session {
+class Player {
 public:
-  std::string date;
-  std::vector<std::pair<std::string, std::vector<std::string>>> games;
+  std::string name;
+  bool member;
+  int games_played;
+};
 
+class Court {
+public:
+  int games_played;
+};
+
+typedef std::unordered_map<std::string, Player> Players;
+typedef std::unordered_map<std::string, int> Courts;
+
+class Session {
+private:
+  std::string date;
+  SessionData session_data;
+
+  Players players;
+  Courts courts;
+
+public:
+  Players get_players() {
+    return players;
+  }
+
+  Courts get_courts() {
+    return courts;
+  }
+
+  void calculate() {
+    // calculate
+  }
   void add_session(std::string file_path) {
     std::ifstream csv_file(file_path);
     if (csv_file.is_open()) {
@@ -103,87 +137,14 @@ public:
     } else {
       std::cerr << "Failed to open " << file_path << std::endl;
     }
+
+    calculate();
   }
 };
 
-class Player {
-public:
-  std::string name;
-  bool member;
-  int games_played;
-};
-
-class Court {
-public:
-  int games_played;
-};
-
-class Team {
-public:
-  std::vector<std::string> names;
-};
-
-class PlayerStats {
+class AllSessions {
 private:
-  std::unordered_map<std::string, Player> data;
-
-public:
-  void print_all() { std::cout << "printing all..." << std::endl; }
-
-  void print_one(std::string item) {
-    std::cout << "printing one..." << std::endl;
-  }
-};
-
-class CourtStats {
-private:
-  std::unordered_map<std::string, Court> data;
-
-public:
-  void print_all() { std::cout << "printing all..." << std::endl; }
-
-  void print_one(std::string item) {
-    std::cout << "printing one..." << std::endl;
-  }
-};
-
-class TeamStats {
-
-private:
-  std::unordered_map<std::string, Player> data;
-
-public:
-  void print_all() { std::cout << "printing all..." << std::endl; }
-
-  void print_one(std::string item) {
-    std::cout << "printing one..." << std::endl;
-  }
-};
-
-class SessionStats {
-private:
-  PlayerStats player_stats;
-  CourtStats court_stats;
-  TeamStats team_stats;
-
-  std::unordered_map<std::string, Player> data;
-
-public:
-  void print_all() { std::cout << "printing all..." << std::endl; }
-
-  void print_one(std::string item) {
-    std::cout << "printing one..." << std::endl;
-  }
-};
-
-class Stats {
-private:
-  std::unordered_map<std::string, Session> data;
-
-  PlayerStats player_stats;
-  CourtStats court_stats;
-  TeamStats team_stats;
-  SessionStats session_stats;
+  std::unordered_map<std::string, Session> all_data;
 
   // std::string yaml_path;
 
@@ -209,15 +170,11 @@ public:
 
   // void set_yaml(std::string yaml_path) { yaml_path = yaml_path; }
 
-  void calculate() {
-    // calculate
+  void combine() {
+    
   }
 
   void print_all() {
-    player_stats.print_all();
-    court_stats.print_all();
-    team_stats.print_all();
-    session_stats.print_all();
   }
 
   void input(std::vector<std::string> inputs) {
@@ -227,11 +184,11 @@ public:
 };
 
 void command_line() {
-  Stats stats;
-  stats.add_folder("csv_files/");
-  // stats.set_yaml("data.yaml");
-  stats.calculate();
-  stats.print_all();
+  AllSessions all_sessions;
+  all_sessions.add_folder("csv_files/");
+  // all_sessions.set_yaml("data.yaml");
+  all_sessions.combine();
+  all_sessions.print_all();
   std::string input;
 
   while (true) {
@@ -242,7 +199,7 @@ void command_line() {
     if (inputs[0] == "exit") {
       break;
     } else {
-      stats.input(inputs);
+      all_sessions.input(inputs);
     }
   }
   return;
