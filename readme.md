@@ -2,26 +2,31 @@
 
 ### Supported Features
 
-- Number of games each player has played.
-- Number of games each team has played together in a session.
-- Number of times each court has been used per session.
-
-### Future Features
-
-- More different types of statistics for players, courts and sessions.
-- `unswbc_stats_v2.cpp` is a work in progress as a cleaned up version.
-- Currently trying to use YAML to store the stats after calculation, but I have
-  run into issues encoding and decoding the complex data structures used.
+- Number of games played in each session and in total for each:
+  - Player
+  - Court
+  - Team (group of 4 players)
 
 ### Usage
-1. At the end of each session, copy the court and player data to a new google sheet. They should have the columns: `COURT | PLAYER 1 | PLAYER 2 | PLAYER 3 | PLAYER 4 |`
+
+1. At the end of each session, copy the court and player data to a new google sheet. They should have the columns:
+
+   - `COURT | PLAYER 1 | PLAYER 2 | PLAYER 3 | PLAYER 4`
+
 2. Download all google sheets for games.
 3. Run `bash xlsx_to_csv.sh` to convert .xlsx files to .csv. Make sure the
-   .xlsx files are in a folder called "google\_sheets". Feel free to change
+   .xlsx files are in a folder called "google_sheets". Feel free to change
    this, and update it in the bash file.
-4. Compile and run `unswbc_stats.cpp` to get stats for all files.
+4. Compile and run `unswbc_stats.cpp` to generate stats files (as .txt files). All output files are in the folder: `stats\_files\/`.
+   - `all.txt` contains stats for all sessions
+   - `YYYYMMDD.txt` contains stats for the session run on that date
 
 ### Example Output
+
+File: `all.txt`
+
+File: `20230415.txt`
+
 ```
 Session Date: 20230415
 Games played this session: 63
